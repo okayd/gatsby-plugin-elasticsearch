@@ -1,0 +1,22 @@
+{
+  "name": "gatsby-plugin-elasticsearch",
+  "version": "0.1.0",
+  "keywords": [
+    "gatsby",
+    "search",
+    "graphql",
+    "elasticsearch",
+    "gatsby-plugin"
+  ],
+  "license": "Apache-2.0",
+  "author": "Henri Cazottes - Logilab",
+  "description": "A gatsby plugin to push to ElasticSearch based on a certain query",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.5.0",
+    "lodash.chunk": "^4.2.0"
+  },
+  "files": [
+    "index.js",
+    "gatsby-node.js"
+  ]
+}
