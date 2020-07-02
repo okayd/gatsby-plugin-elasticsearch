@@ -13,14 +13,15 @@ const identity = (obj) => obj;
 
 exports.onPostBuild = async function (
   { graphql },
-  { node, apiKey, queries, chunkSize = 1000 }
+  { node, apiKey, auth, queries, chunkSize = 1000 }
 ) {
   activity.start();
 
   const config = { node: node };
-  if (apiKey) {
-    config['auth'] = {};
-    config['auth']['apiKey'] = apiKey;
+  if (auth) {
+    config['auth'] = auth;
+  } else if (apiKey) {
+    config['auth'] = { apiKey: apiKey };
   }
   const client = new Client(config);
 
