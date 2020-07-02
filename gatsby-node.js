@@ -9,9 +9,9 @@ let activity = report.activityTimer(`Indexing to ElasticSearch`);
  *
  * @param {any} obj what to keep the same
  */
-const identity = obj => obj;
+const identity = (obj) => obj;
 
-exports.onPostBuild = async function(
+exports.onPostBuild = async function (
   { graphql },
   { node, apiKey, queries, chunkSize = 1000 }
 ) {
@@ -36,7 +36,7 @@ exports.onPostBuild = async function(
   ) {
     if (!query) {
       report.panic(
-        `failed to index to Algolia. You did not give "query" to this query`
+        `failed to index to Elasticsearch. You did not give "query" to this query`
       );
     }
 
@@ -65,8 +65,8 @@ exports.onPostBuild = async function(
 
     setStatus(activity, `query ${i}: splitting in ${chunks.length} jobs`);
 
-    const chunkJobs = chunks.map(async function(chunked) {
-      const body = chunked.flatMap(doc => [
+    const chunkJobs = chunks.map(async function (chunked) {
+      const body = chunked.flatMap((doc) => [
         { index: { _index: newIndex } },
         doc,
       ]);
@@ -132,7 +132,7 @@ async function getIndicesStartingWith(client, basename) {
     const response = await client.cat.indices({ h: ['index'] });
     indices = response.body
       .split('\n')
-      .filter(index => index.startsWith(basename));
+      .filter((index) => index.startsWith(basename));
   } catch (err) {
     // No indices found
   }
@@ -176,7 +176,7 @@ async function deleteOrphanIndices(client, index) {
     try {
       response = await client.indices.getAlias({ name: index });
       aliasedIndices = Object.keys(response.body);
-      indices.map(async index => {
+      indices.map(async (index) => {
         if (!aliasedIndices.includes(index)) {
           await client.indices.delete({ index: index });
         }
