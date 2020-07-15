@@ -65,22 +65,34 @@ exports.onPostBuild = async function (
     const chunks = chunk(objects, chunkSize);
 
     setStatus(activity, `query ${i}: splitting in ${chunks.length} jobs`);
-
-    const chunkJobs = chunks.map(async function (chunked) {
-      const body = chunked.flatMap((doc) => [
+    const errors = []
+    for(const chunk of chunks) {
+      const body = chunk.flatMap((doc) => [
         { index: { _index: newIndex } },
         doc,
       ]);
-      return client.bulk({
+      const bulkResult = await client.bulk({
         index: newIndex,
         type: '_doc',
         refresh: true,
         body: body,
       });
-    });
-    await Promise.all(chunkJobs);
+      if (bulkResult.body.errors) {
+        const chunkErrors = bulkResult.body.items.filter(
+            item => item.index.error
+          ).map(
+            item => JSON.stringify(item.index.error)
+          )
+        errors.push(...chunkErrors);
+      }
+    }
+    const insertedCount = objects.length - errors.length
+    setStatus(undefined, `inserted ${insertedCount} of ${objects.length} documents in '${alias}'`);
 
-    setStatus(undefined, `inserted ${objects.length} documents in '${alias}'`);
+    for (const error of errors) {
+      report.error(error);
+    }
+
     return moveAlias(client, newIndex, alias);
   });
 
