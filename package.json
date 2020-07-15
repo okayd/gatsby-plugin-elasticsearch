@@ -15,8 +15,14 @@
     "@elastic/elasticsearch": "^7.5.0",
     "lodash.chunk": "^4.2.0"
   },
+  "scripts": {
+    "lint": "eslint *.js"
+  },
   "files": [
     "index.js",
     "gatsby-node.js"
-  ]
+  ],
+  "devDependencies": {
+    "eslint": "^7.4.0"
+  }
 }
