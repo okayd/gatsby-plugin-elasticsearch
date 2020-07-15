@@ -65,22 +65,34 @@ exports.onPostBuild = async function (
     const chunks = chunk(objects, chunkSize);
 
     setStatus(activity, `query ${i}: splitting in ${chunks.length} jobs`);
-
-    const chunkJobs = chunks.map(async function (chunked) {
-      const body = chunked.flatMap((doc) => [
+    const errors = []
+    for(const chunk of chunks) {
+      const body = chunk.flatMap((doc) => [
         { index: { _index: newIndex } },
         doc,
       ]);
-      return client.bulk({
+      const bulkResult = await client.bulk({
         index: newIndex,
         type: '_doc',
         refresh: true,
         body: body,
       });
-    });
-    await Promise.all(chunkJobs);
+      if (bulkResult.body.errors) {
+        const chunkErrors = bulkResult.body.items.filter(
+            item => item.index.error
+          ).map(
+            item => JSON.stringify(item.index.error)
+          )
+        errors.push(...chunkErrors);
+      }
+    }
+    const insertedCount = objects.length - errors.length
+    setStatus(undefined, `inserted ${insertedCount} of ${objects.length} documents in '${alias}'`);
 
-    setStatus(undefined, `inserted ${objects.length} documents in '${alias}'`);
+    for (const error of errors) {
+      report.error(error);
+    }
+
     return moveAlias(client, newIndex, alias);
   });
 
@@ -102,12 +114,11 @@ exports.onPostBuild = async function (
  * @param alias
  */
 async function moveAlias(client, targetIndex, alias) {
-  let response;
 
   try {
-    response = await client.indices.getAlias({ name: alias });
+    const response = await client.indices.getAlias({ name: alias });
     await Promise.all(
-      Object.entries(response.body).map(async ([aliasedIndex, aliases]) => {
+      Object.entries(response.body).map(async ([aliasedIndex, ]) => {
         setStatus(activity, `deleting index '${aliasedIndex}'`);
         return client.indices.delete({ index: aliasedIndex });
       })
@@ -148,7 +159,6 @@ async function getIndicesStartingWith(client, basename) {
  * @param index
  */
 async function getUniqueIndexName(client, basename) {
-  let count = 0;
   const indices = await getIndicesStartingWith(client, `${basename}_`);
 
   const max_suffix = indices.reduce((acc, indexName) => {
@@ -176,7 +186,7 @@ async function deleteOrphanIndices(client, index) {
     const indices = await getIndicesStartingWith(client, `${index}_`);
     try {
       response = await client.indices.getAlias({ name: index });
-      aliasedIndices = Object.keys(response.body);
+      const aliasedIndices = Object.keys(response.body);
       indices.map(async (index) => {
         if (!aliasedIndices.includes(index)) {
           await client.indices.delete({ index: index });
