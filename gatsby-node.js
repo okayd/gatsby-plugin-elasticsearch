@@ -102,12 +102,11 @@ exports.onPostBuild = async function (
  * @param alias
  */
 async function moveAlias(client, targetIndex, alias) {
-  let response;
 
   try {
-    response = await client.indices.getAlias({ name: alias });
+    const response = await client.indices.getAlias({ name: alias });
     await Promise.all(
-      Object.entries(response.body).map(async ([aliasedIndex, aliases]) => {
+      Object.entries(response.body).map(async ([aliasedIndex, ]) => {
         setStatus(activity, `deleting index '${aliasedIndex}'`);
         return client.indices.delete({ index: aliasedIndex });
       })
@@ -148,7 +147,6 @@ async function getIndicesStartingWith(client, basename) {
  * @param index
  */
 async function getUniqueIndexName(client, basename) {
-  let count = 0;
   const indices = await getIndicesStartingWith(client, `${basename}_`);
 
   const max_suffix = indices.reduce((acc, indexName) => {
@@ -176,7 +174,7 @@ async function deleteOrphanIndices(client, index) {
     const indices = await getIndicesStartingWith(client, `${index}_`);
     try {
       response = await client.indices.getAlias({ name: index });
-      aliasedIndices = Object.keys(response.body);
+      const aliasedIndices = Object.keys(response.body);
       indices.map(async (index) => {
         if (!aliasedIndices.includes(index)) {
           await client.indices.delete({ index: index });
