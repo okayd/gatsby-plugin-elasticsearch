@@ -65,8 +65,8 @@ exports.onPostBuild = async function (
     const chunks = chunk(objects, chunkSize);
 
     setStatus(activity, `query ${i}: splitting in ${chunks.length} jobs`);
-    const errors = []
-    for(const chunk of chunks) {
+    const errors = [];
+    for (const chunk of chunks) {
       const body = chunk.flatMap((doc) => [
         { index: { _index: newIndex } },
         doc,
@@ -78,16 +78,17 @@ exports.onPostBuild = async function (
         body: body,
       });
       if (bulkResult.body.errors) {
-        const chunkErrors = bulkResult.body.items.filter(
-            item => item.index.error
-          ).map(
-            item => JSON.stringify(item.index.error)
-          )
+        const chunkErrors = bulkResult.body.items
+          .filter((item) => item.index.error)
+          .map((item) => JSON.stringify(item.index.error));
         errors.push(...chunkErrors);
       }
     }
-    const insertedCount = objects.length - errors.length
-    setStatus(undefined, `inserted ${insertedCount} of ${objects.length} documents in '${alias}'`);
+    const insertedCount = objects.length - errors.length;
+    setStatus(
+      undefined,
+      `inserted ${insertedCount} of ${objects.length} documents in '${alias}'`
+    );
 
     for (const error of errors) {
       report.error(error);
@@ -114,11 +115,10 @@ exports.onPostBuild = async function (
  * @param alias
  */
 async function moveAlias(client, targetIndex, alias) {
-
   try {
     const response = await client.indices.getAlias({ name: alias });
     await Promise.all(
-      Object.entries(response.body).map(async ([aliasedIndex, ]) => {
+      Object.entries(response.body).map(async ([aliasedIndex]) => {
         setStatus(activity, `deleting index '${aliasedIndex}'`);
         return client.indices.delete({ index: aliasedIndex });
       })
@@ -232,11 +232,18 @@ async function setSettings(client, index, indexConfig) {
       body: { ...mappings },
     }));
 
-  settings &&
-    (await client.indices.putSettings({
+  if (settings) {
+    await client.indices.close({
+      index: index,
+    });
+    await client.indices.putSettings({
       index: index,
       body: { settings: settings },
-    }));
+    });
+    await client.indices.open({
+      index: index,
+    });
+  }
 }
 
 /**
