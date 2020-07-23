@@ -226,12 +226,6 @@ async function createIndex(client, index) {
 async function setSettings(client, index, indexConfig) {
   const { mappings, settings } = indexConfig;
 
-  mappings &&
-    (await client.indices.putMapping({
-      index: index,
-      body: { ...mappings },
-    }));
-
   if (settings) {
     await client.indices.close({
       index: index,
@@ -244,6 +238,12 @@ async function setSettings(client, index, indexConfig) {
       index: index,
     });
   }
+
+  mappings &&
+    (await client.indices.putMapping({
+      index: index,
+      body: { ...mappings },
+    }));
 }
 
 /**
