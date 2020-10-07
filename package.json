@@ -11,6 +11,11 @@
   "license": "Apache-2.0",
   "author": "Henri Cazottes - Logilab",
   "description": "A gatsby plugin to push to ElasticSearch based on a certain query",
+  "homepage": "https://gitlab.com/logilab/gatsby-plugin-elasticsearch/",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/logilab/gatsby-plugin-elasticsearch.git"
+  },
   "dependencies": {
     "@elastic/elasticsearch": "^7.5.0",
     "lodash.chunk": "^4.2.0"
