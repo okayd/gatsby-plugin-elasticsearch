@@ -1,0 +1,12 @@
+/node_modules/**/*.*
+
+# Jenkins-X
+/.lighthouse/**/*.*
+/charts/**/*.*
+
+# Babel build
+/dist/**/*.*
+
+# Jest
+/coverage/**/*.*
+/**/__snapshots__/**/*.*
