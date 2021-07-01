@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  creationTimestamp: null
+  name: release
+spec:
+  pipelineSpec:
+    tasks:
+      - name: from-build-pack
+        resources: {}
+        taskSpec:
+          metadata: {}
+          stepTemplate:
+            env:
+              - name: NPM_CONFIG_USERCONFIG
+                value: /tekton/home/npm/.npmrc
+              - name: NPM_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: gpe-github
+                    key: npmToken
+            image: uses:jenkins-x/jx3-pipeline-catalog/tasks/typescript/release.yaml@versionStream
+            name: ""
+            resources:
+              requests:
+                cpu: 400m
+                memory: 512Mi
+            volumeMounts:
+              - mountPath: /tekton/home/npm
+                name: npmrc
+            workingDir: /workspace/source
+          steps:
+            - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/git-clone/git-clone.yaml@versionStream
+              name: ""
+              resources: {}
+            - name: next-version
+              resources: {}
+            - name: jx-variables
+              resources: {}
+            - image: node:12-slim
+              name: npm-version
+              resources: {}
+              script: |
+                #!/usr/bin/env bash
+                source .jx/variables.sh
+                npm version $VERSION
+            - name: build-npm-install
+              resources: {}
+            - name: build-npm-test
+              resources: {}
+            - image: node:12-slim
+              name: npm-publish
+              resources: {}
+              script: |
+                #!/bin/sh
+                npm run build
+                npm publish
+            - name: promote-changelog
+              resources: {}
+          volumes:
+            - name: npmrc
+              secret:
+                optional: true
+                secretName: npmrc
+  podTemplate: {}
+  serviceAccountName: tekton-bot
+  timeout: 12h0m0s
+status: {}

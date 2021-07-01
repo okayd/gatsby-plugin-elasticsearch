@@ -1,5 +1,5 @@
 {
-  "name": "@logilab/gatsby-plugin-elasticsearch",
+  "name": "@okayd/gatsby-plugin-elasticsearch",
   "version": "0.1.5",
   "keywords": [
     "gatsby",
@@ -11,10 +11,10 @@
   "license": "Apache-2.0",
   "author": "Henri Cazottes - Logilab",
   "description": "A gatsby plugin to push to ElasticSearch based on a certain query",
-  "homepage": "https://gitlab.com/logilab/gatsby-plugin-elasticsearch/",
+  "homepage": "https://github.com/okayd/gatsby-plugin-elasticsearch/",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/logilab/gatsby-plugin-elasticsearch.git"
+    "url": "https://github.com/okayd/gatsby-plugin-elasticsearch.git"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.5.0",

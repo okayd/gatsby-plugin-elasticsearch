@@ -1,5 +1,19 @@
 # Gatsby plugin ElasticSearch
 
+> Important: This is a fork of [@logilab/gatsby-plugin-elasticsearch hosted on GitLab](https://gitlab.com/logilab/gatsby-plugin-elasticsearch/). 
+
+To share functionality with the original open-source project, try to implement features generically. You should set `@logilab/gatsby-plugin-elasticsearch` as an upstream remote in git.
+
+```shell
+git remote add upstream @logilab/gatsby-plugin-elasticsearch
+```
+
+Feature branches should be ideally be branched from the upstream repo's `master` branch so that the code can be shared. That work can then be `cherry-picked` into a new feature branch derived from `main`, which will be used for a PR within the Okayd infrastructure.
+
+Ideally, this fork of `gatsby-plugin-elasticsearch` will not be needed for the long term. Time will tell...
+
+---
+
 > This plugin is mostly inspired by [gatsby-plugin-algolia](https://github.com/algolia/gatsby-plugin-algolia)
 
 You can specify a list of queries to run and how to transform them into an array of objects to index. When you run `gatsby build`, it will publish those to your Elasticsearch node.

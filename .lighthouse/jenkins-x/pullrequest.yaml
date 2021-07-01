@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  creationTimestamp: null
+  name: pullrequest
+spec:
+  pipelineSpec:
+    tasks:
+      - name: from-build-pack
+        resources: {}
+        taskSpec:
+          metadata: {}
+          stepTemplate:
+            env:
+              - name: NPM_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: gpe-github
+                    key: npmToken
+            image: uses:jenkins-x/jx3-pipeline-catalog/tasks/typescript/pullrequest.yaml@versionStream
+            name: ""
+            resources:
+              requests:
+                cpu: 400m
+                memory: 512Mi
+            workingDir: /workspace/source
+          steps:
+            - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/git-clone/git-clone-pr.yaml@versionStream
+              name: ""
+              resources: {}
+            - name: jx-variables
+              resources: {}
+            - image: node:12-slim
+              name: npm-version
+              resources: {}
+              script: |
+                #!/usr/bin/env bash
+                source .jx/variables.sh
+                npm version $VERSION
+            - name: build-npm-install
+              resources: {}
+            - name: build-npm-test
+              resources: {}
+            - image: node:12-slim
+              name: npm-publish
+              resources: {}
+              script: |
+                #!/bin/sh
+                npm run build
+                npm publish
+  podTemplate: {}
+  serviceAccountName: tekton-bot
+  timeout: 12h0m0s
+status: {}
