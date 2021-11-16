@@ -43,14 +43,12 @@
     "typecheck-watch": "npm run typecheck -- --watch"
   },
   "dependencies": {
-    "@babel/runtime": "^7.14.6",
     "lodash.chunk": "4.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.5",
-    "@babel/core": "^7.14.6",
-    "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/plugin-proposal-private-methods": "^7.14.5",
+    "@babel/cli": "7.14.5",
+    "@babel/core": "7.14.6",
+    "@babel/runtime": "7.14.6",
     "@commitlint/cli": "12.1.4",
     "@commitlint/config-conventional": "12.1.4",
     "@elastic/elasticsearch": "7.13.0",
@@ -64,8 +62,7 @@
     "babel-jest": "26.6.3",
     "babel-plugin-import-globals": "2.0.0",
     "babel-plugin-root-import": "6.6.0",
-    "babel-preset-gatsby": "1.6.0-next.0",
-    "babel-preset-gatsby-package": "1.6.0-next.0",
+    "babel-preset-gatsby-package": "1.14.0",
     "doctoc": "2.0.0",
     "eslint": "7.24.0",
     "eslint-config-airbnb": "18.2.1",
@@ -75,6 +72,7 @@
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "24.3.5",
     "eslint-plugin-prettier": "3.4.0",
+    "gatsby": "3.14.5",
     "husky": "6.0.0",
     "identity-obj-proxy": "3.0.0",
     "import-sort-cli": "6.0.0",
@@ -98,6 +96,6 @@
     "gatsby": ">=3.0.0-next.0"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=12.13.0"
   }
 }
