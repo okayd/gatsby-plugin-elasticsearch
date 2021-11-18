@@ -1,0 +1,31 @@
+{
+  "rules": {
+    "bin-type": "error",
+    "config-type": "error",
+    "engines-type": "error",
+    "no-tilde-version-dependencies": "error",
+    "no-archive-dependencies": "error",
+    "no-caret-version-dependencies": "error",
+    "no-file-dependencies": "error",
+    "no-tilde-version-devDependencies": "error",
+    "no-archive-devDependencies": "error",
+    "no-caret-version-devDependencies": "error",
+    "no-file-devDependencies": "error",
+    "prefer-alphabetical-bundledDependencies": "error",
+    "prefer-alphabetical-optionalDependencies": "error",
+    "prefer-alphabetical-peerDependencies": "error",
+    "prefer-no-contributors": "error",
+    "require-author": "off",
+    "require-description": "error",
+    "require-engines": "error",
+    "require-homepage": "error",
+    "require-keywords": "error",
+    "require-license": "error",
+    "require-name": "error",
+    "require-repository": "error",
+    "require-version": "error",
+    "valid-values-private": ["error", [true]],
+    "valid-values-license": ["error", ["Apache-2.0"]],
+    "valid-values-engines": ["error", [{ "node": ">=12.13.0" }]]
+  }
+}
