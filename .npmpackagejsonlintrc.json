@@ -26,6 +26,6 @@
     "require-version": "error",
     "valid-values-private": ["error", [true]],
     "valid-values-license": ["error", ["Apache-2.0"]],
-    "valid-values-engines": ["error", [{ "node": ">=12.13.0" }]]
+    "valid-values-engines": ["error", [{ "node": ">=14.15.0" }]]
   }
 }
