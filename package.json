@@ -1,6 +1,6 @@
 {
   "name": "@okayd/gatsby-plugin-elasticsearch",
-  "version": "0.1.5",
+  "version": "0.2.4",
   "description": "A gatsby plugin to push to ElasticSearch based on a certain query",
   "keywords": [
     "gatsby",
