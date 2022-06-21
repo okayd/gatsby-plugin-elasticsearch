@@ -1,0 +1,111 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "sourceType": "module"
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "plugins": ["prettier"],
+  "extends": ["eslint:recommended","plugin:import/recommended","plugin:import/typescript","prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "import/prefer-default-export": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "js": "never",
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": "**/*.+(ts)",
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "plugins": ["@typescript-eslint/eslint-plugin"],
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "no-use-before-define": [0],
+        "@typescript-eslint/no-use-before-define": [1],
+        "@typescript-eslint/quotes": [
+          2,
+          "backtick",
+          {
+            "avoidEscape": true
+          }
+        ]
+      }
+    },
+    {
+      // relax lint rules due to Gatsby convention
+      "files": ["src/declarations.d.ts"],
+      "rules": {
+        "no-underscore-dangle": "off"
+      }
+    },
+    {
+      // relax lint rules for Gatsby test utility
+      "files": ["src/__test__/util/*.+(ts)"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "import/no-unresolved": "off",
+        "import/no-extraneous-dependencies": "off"
+      }
+    },
+    {
+      // relax lint rules for generator methods
+      "files": "util/**/*.js",
+      "rules": {
+        "no-unused-vars": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-console": "off"
+      }
+    },
+    {
+      // relax lint rules for tests
+      "files": ["src/**/*.test.+(ts)","**/__mocks__/*.+(js|ts)"],
+      "rules": {
+        "no-unused-vars": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-undef": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    },
+    {
+      // relax lint rules for jest configuration
+      "files": ["loadershim.js","jest.setup.ts"],
+      "rules": {
+        "no-underscore-dangle": "off",
+        "no-undef": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "root-import": {
+        "rootPathPrefix": "@",
+        "rootPathSuffix": "src",
+        "extensions": [".js", ".ts"]
+      }
+    }
+  }
+}

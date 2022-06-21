@@ -1,0 +1,12 @@
+/coverage
+**/__coverage__
+**/__snapshots__
+/.cache
+/public
+/node_modules
+/package-lock.json
+/.lighthouse
+/charts
+/preview
+/dist
+/src/sef

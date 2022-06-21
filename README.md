@@ -1,6 +1,6 @@
 # Gatsby plugin ElasticSearch
 
-> Important: This is a fork of [@logilab/gatsby-plugin-elasticsearch hosted on GitLab](https://gitlab.com/logilab/gatsby-plugin-elasticsearch/). 
+> Important: This is a fork of [@logilab/gatsby-plugin-elasticsearch hosted on GitLab](https://gitlab.com/logilab/gatsby-plugin-elasticsearch/).
 
 To share functionality with the original open-source project, try to implement features generically. You should set `@logilab/gatsby-plugin-elasticsearch` as an upstream remote in git.
 
@@ -12,6 +12,13 @@ Feature branches should be ideally be branched from the upstream repo's `master`
 
 Ideally, this fork of `gatsby-plugin-elasticsearch` will not be needed for the long term. Time will tell...
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Feedback](#feedback)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ---
 
 > This plugin is mostly inspired by [gatsby-plugin-algolia](https://github.com/algolia/gatsby-plugin-algolia)
@@ -21,7 +28,13 @@ You can specify a list of queries to run and how to transform them into an array
 Here we have an example with some data that might not be very relevant, but will work with the default configuration of `gatsby new`
 
 ```shell
-$ yarn add gatsby-plugin-elasticsearch
+npm install @okayd/gatsby-plugin-elasticsearch
+```
+
+OR
+
+```shell
+yarn add @okayd/gatsby-plugin-elasticsearch
 ```
 
 Just pass a plain graphql query to fetch nodes, each one will create a document:
@@ -60,7 +73,7 @@ const queries = [
 module.exports = {
   plugins: [
     {
-      resolve: `gatsby-plugin-elasticsearch`,
+      resolve: `@okayd/gatsby-plugin-elasticsearch`,
       options: {
         node: 'http://localhost:9200',
         apiKey: process.env.ES_API_KEY, // optional
@@ -143,7 +156,7 @@ async function myQueryFactory(graphql) => {
 module.exports = {
   plugins: [
     {
-      resolve: `gatsby-plugin-elasticsearch`,
+      resolve: `@okayd/gatsby-plugin-elasticsearch`,
       options: {
         node: 'http://localhost:9200',
         apiKey: process.env.ES_API_KEY, // optional
@@ -159,6 +172,6 @@ The `transformer` field accepts a function and optionally you may provide an `as
 
 The index will be synchronised with the provided index name on your Elasticsearch node on the `build` step in Gatsby.
 
-# Feedback
+## Feedback
 
 Feel free to open issues or PR to improve it!
