@@ -1,6 +1,6 @@
 module.exports = {
   '{README}.md': ['doctoc --maxlevel 3 --notitle'],
-  'package.json': ['npm run format-package-json'],
+  'package.json': ['npm run format-package-json', 'npm run lint-package-json'],
   '.editorconfig': ['prettier --write'],
   LICENSE: ['prettier --write'],
   // Typescript check does not respect per-file scopes.
