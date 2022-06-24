@@ -1,23 +1,18 @@
-import { Client } from '@elastic/elasticsearch';
+import { Client, ClientOptions } from '@elastic/elasticsearch';
+import { GatsbyNode } from 'gatsby';
 import chunk from 'lodash.chunk';
 
+import {
+  createIndex,
+  deleteOrphanIndices,
+  getUniqueIndexName,
+  moveAlias,
+  setSettings,
+} from './elastic';
+import { pluginPrefix } from './error-utils';
 import { GatsbyActivityTimer } from './gatsby-node.types';
-
-let activity: GatsbyActivityTimer;
-
-/**
- * hotfix the Gatsby reporter to allow setting status (not supported everywhere)
- *
- * @param {Object} activity reporter
- * @param {String} status status to report
- */
-function setStatus(activity: GatsbyActivityTimer | undefined, status: string) {
-  if (activity && activity.setStatus) {
-    activity.setStatus(status);
-  } else {
-    console.log(`ElasticSearch:`, status);
-  }
-}
+import { createPluginConfig, validateOptions } from './pluginOptions';
+import { setStatus } from './utils';
 
 /**
  * give back the same thing as this was called with.
@@ -27,170 +22,52 @@ function setStatus(activity: GatsbyActivityTimer | undefined, status: string) {
 const identity = (obj: any) => obj;
 
 /**
- * moves the alias to the target index, delete previously aliased index
- *
- * @param client
- * @param targetIndex
- * @param alias
+ * Called once Gatsby has initialized itself and is ready to bootstrap your site.
+ * @see https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/#onPostBootstrap
  */
-async function moveAlias(client: any, targetIndex: any, alias: any) {
-  try {
-    const response = await client.indices.getAlias({ name: alias });
-    await Promise.all(
-      Object.entries(response.body).map(async ([aliasedIndex]) => {
-        setStatus(activity, `deleting index '${aliasedIndex}'`);
-        return client.indices.delete({ index: aliasedIndex });
-      })
-    );
-  } catch (error) {
-    // No existing alias found
-  }
-
-  await client.indices.putAlias({ index: targetIndex, name: alias });
-  setStatus(activity, `moved alias '${alias}' -> '${targetIndex}'`);
-}
-
-/**
- * get indices starting with basename
- *
- * @param client
- * @param basename
- */
-async function getIndicesStartingWith(client: any, basename: any) {
-  let indices = [];
-
-  try {
-    const response = await client.cat.indices({ h: [`index`] });
-    indices = response.body
-      .split(`\n`)
-      .filter((index: any) => index.startsWith(basename));
-  } catch (err) {
-    // No indices found
-  }
-
-  return indices;
-}
-
-/**
- * returns a unique index name
- *
- * @param client
- * @param index
- */
-async function getUniqueIndexName(client: any, basename: string) {
-  const indices = await getIndicesStartingWith(client, `${basename}_`);
-
-  const max_suffix = indices.reduce((acc: any, indexName: string) => {
-    const parts = indexName.split(`_`);
-    const current_index = Number(parts[parts.length - 1]);
-
-    return Math.max(acc, current_index);
-  }, 0);
-
-  indices.length &&
-    setStatus(activity, `indices [${indices.join()}]  already exists`);
-
-  return `${basename}_${max_suffix + 1}`;
-}
-
-/**
- * delete indices not linked to an alias
- *
- * @param client
- * @param index
- */
-async function deleteOrphanIndices(client: any, index: any) {
-  let response;
-  try {
-    const indices = await getIndicesStartingWith(client, `${index}_`);
-    try {
-      response = await client.indices.getAlias({ name: index });
-      const aliasedIndices = Object.keys(response.body);
-      indices.map(async (index: any) => {
-        if (!aliasedIndices.includes(index)) {
-          await client.indices.delete({ index: index });
-        }
-      });
-    } catch (err) {
-      // No aliased index found
-      console.warn(err);
-    }
-  } catch (err) {
-    // No existing indices found
-    console.warn(err);
-  }
-}
-
-/**
- * creates a new index
- *
- * @param client
- * @param index
- */
-async function createIndex(client: any, index: any) {
-  const createConfig = {
-    index: index,
-  };
-  await client.indices.create(createConfig);
-  setStatus(activity, `index '${index}' created`);
-}
-
-/**
- * apply settings and mappings to the index if any
- *
- * @param client
- * @param index
- * @param indexConfig
- */
-async function setSettings(client: any, index: any, indexConfig: any) {
-  const { mappings, settings } = indexConfig;
-
-  if (settings) {
-    await client.indices.close({
-      index: index,
-    });
-    await client.indices.putSettings({
-      index: index,
-      body: { settings: settings },
-    });
-    await client.indices.open({
-      index: index,
-    });
-  }
-
-  mappings &&
-    (await client.indices.putMapping({
-      index: index,
-      body: { ...mappings },
-    }));
-}
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export const onPostBuild: Promise<void> = async (
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  { graphql, reporter },
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  { node, apiKey, auth, queries, chunkSize = 1000 }
+export const onPreBootstrap: GatsbyNode['onPreBootstrap'] = (
+  { reporter },
+  pluginOptions
 ) => {
-  activity = reporter.activityTimer(`Indexing to ElasticSearch`);
+  validateOptions({ reporter }, pluginOptions);
+  reporter.verbose(`[${pluginPrefix}] Successfully validated configuration.`);
+};
+
+/**
+ * The last extension point called after all other parts of the build process are complete.
+ *
+ * @param graphql
+ * @param reporter
+ * @param node
+ * @param apiKey
+ * @param auth
+ * @param queries
+ * @param chunkSize
+ */
+export const onPostBuild: GatsbyNode['onPostBuild'] = async (
+  { graphql, reporter },
+  pluginOptions
+) => {
+  const { node, apiKey, auth, chunkSize, ...rest } =
+    createPluginConfig(pluginOptions);
+
+  let queries = rest.queries;
+  const activity: GatsbyActivityTimer = reporter.activityTimer(
+    `Indexing to ElasticSearch`
+  );
   activity.start();
 
-  const config = { node: node };
+  const config: ClientOptions = { node: node };
   if (auth) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     config[`auth`] = auth;
   } else if (apiKey) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     config[`auth`] = { apiKey: apiKey };
   }
   const client = new Client(config);
 
   if (typeof queries === `function`) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     queries = await Promise.all(await queries(graphql));
   }
 
@@ -212,13 +89,17 @@ export const onPostBuild: Promise<void> = async (
       query = await query(graphql);
     }
     if (typeof alias === `function`) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       alias = await alias(graphql);
     }
 
     await deleteOrphanIndices(client, alias);
 
-    const newIndex = await getUniqueIndexName(client, alias);
+    const newIndex = await getUniqueIndexName(client, alias, activity);
     await createIndex(client, newIndex);
+    setStatus(activity, `index '${newIndex}' created`);
+
     if (indexConfig) {
       await setSettings(client, newIndex, indexConfig);
     }
@@ -260,14 +141,14 @@ export const onPostBuild: Promise<void> = async (
       reporter.error(error);
     }
 
-    return moveAlias(client, newIndex, alias);
+    return moveAlias(client, newIndex, alias, activity);
   });
 
   try {
     await Promise.all(jobs);
     setStatus(activity, `done`);
-  } catch (err) {
-    reporter.panic(`failed to index to ElasticSearch`, err);
+  } catch (error) {
+    reporter.panic(`failed to index to ElasticSearch`, error as Error);
   }
 
   activity.end();
