@@ -1,5 +1,7 @@
 # Gatsby plugin ElasticSearch
 
+[![nvm friendly](https://img.shields.io/badge/nvm-managed-blue.svg)](http://github.com/nvm-sh/nvm/) [![Maintainability](https://api.codeclimate.com/v1/badges/042bba7c4880897fb561/maintainability)](https://codeclimate.com/github/okayd/gatsby-plugin-elasticsearch/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/042bba7c4880897fb561/test_coverage)](https://codeclimate.com/github/okayd/gatsby-plugin-elasticsearch/test_coverage)
+
 > Important: This is a fork of [@logilab/gatsby-plugin-elasticsearch hosted on GitLab](https://gitlab.com/logilab/gatsby-plugin-elasticsearch/).
 
 To share functionality with the original open-source project, try to implement features generically. You should set `@logilab/gatsby-plugin-elasticsearch` as an upstream remote in git.
