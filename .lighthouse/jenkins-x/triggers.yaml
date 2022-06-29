@@ -23,7 +23,7 @@ spec:
     - name: release
       context: "release"
       source: "release.yaml"
-      ignore_changes: ".lighthouse/jenkins-x/(pullrequest|triggers|release|coverage|codeclimate).yaml|.npmrc"
+      ignore_changes: ".lighthouse/jenkins-x/(pullrequest|triggers|release|coverage|codeclimate).yaml|.npmrc|README.md"
       branches:
         - ^main$
         - ^master$
