@@ -2,16 +2,28 @@ apiVersion: config.lighthouse.jenkins-x.io/v1alpha1
 kind: TriggerConfig
 spec:
   presubmits:
+    - name: coverage
+      context: "coverage"
+      always_run: true
+      optional: true
+      source: "coverage.yaml"
     - name: pr
       context: "pr"
       always_run: true
       optional: false
       source: "pullrequest.yaml"
   postsubmits:
+    - name: codeclimate
+      context: "codeclimate"
+      optional: true
+      source: "codeclimate.yaml"
+      branches:
+        - ^main$
+        - ^master$
     - name: release
       context: "release"
       source: "release.yaml"
-      ignore_changes: ".lighthouse/jenkins-x/(pullrequest|release|triggers).yaml|.npmrc"
+      ignore_changes: ".lighthouse/jenkins-x/(pullrequest|triggers|release|coverage|codeclimate).yaml|.npmrc"
       branches:
         - ^main$
         - ^master$
