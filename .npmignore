@@ -60,9 +60,13 @@ examples
 .lighthouse
 OWNERS
 OWNERS_ALIASES
+charts
 
 # babel
 .babelrc.js
+
+# codeclimate
+.codeclimate.yml
 
 # misc project files
 .commitlintrc.json
