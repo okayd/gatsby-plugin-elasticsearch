@@ -75,10 +75,13 @@ charts
 .eslintrc
 .importsortrc.js
 .lintstagedrc.js
+.markdownlint.yml
 .npmrc
+.npmpackagejsonlintrc.json
 .nvmrc
 .prettierignore
 .prettierrc.js
+renovate.json
 CODE_OF_CONDUCT.md
 MAINTAINING.md
 
