@@ -3,8 +3,7 @@ module.exports = {
   'package.json': ['npm run format-package-json', 'npm run lint-package-json'],
   '.editorconfig': ['prettier --write'],
   LICENSE: ['prettier --write'],
-  // Typescript check does not respect per-file scopes.
-  '**/*.md': ['markdownlint --ignore charts --ignore content'],
+  '**/*.md': ['markdownlint'],
   '**/*.{css,html,json,less,md,mdx,scss,vue,yaml,yml}': ['prettier --write'],
   '**/*.{gql,graphql}': ['prettier --write'],
   '(**/*.{js,jsx,ts,tsx}|!.*.{js,ts})': [
