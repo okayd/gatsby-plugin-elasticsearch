@@ -22,9 +22,7 @@ spec:
             image: uses:jenkins-x/jx3-pipeline-catalog/tasks/typescript/release.yaml@versionStream
             name: ""
             resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
+              limits: {}
             volumeMounts:
               - mountPath: /tekton/home/npm
                 name: npmrc
