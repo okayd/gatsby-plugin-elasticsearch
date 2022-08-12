@@ -27,9 +27,7 @@ spec:
             image: uses:jenkins-x/jx3-pipeline-catalog/tasks/typescript/release.yaml@versionStream
             name: ""
             resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
+              limits: {}
             volumeMounts:
               - mountPath: /tekton/home/npm
                 name: npmrc
@@ -38,7 +36,7 @@ spec:
             - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/git-clone/git-clone.yaml@versionStream
               name: ""
               resources: {}
-            - image: ghcr.io/jenkins-x/jx-boot:3.2.394
+            - image: ghcr.io/jenkins-x/jx-boot:3.3.2
               name: codeclimate-variables
               resources:
                 requests:

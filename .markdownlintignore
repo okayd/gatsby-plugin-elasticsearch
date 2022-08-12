@@ -1,0 +1,7 @@
+node_modules/
+
+charts/
+
+dist/
+coverage/
+/**/__test__/**/*.*

@@ -1,6 +1,6 @@
 {
   "name": "@okayd/gatsby-plugin-elasticsearch",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "A gatsby plugin to push to ElasticSearch based on a certain query",
   "keywords": [
     "gatsby",
@@ -35,7 +35,7 @@
     "lint": "run-p lint-eslint lint-markdown lint-package-json",
     "lint-eslint": "eslint --ext .js,.jsx,.ts,.tsx --format=pretty ./",
     "lint-eslint-watch": "onchange 'src/**/*' --initial --kill --delay 1000 -- npm run lint-eslint",
-    "lint-markdown": "markdownlint --ignore charts --ignore content --ignore .cache --ignore public --ignore node_modules '**/*.md' '.**/**/*.md'",
+    "lint-markdown": "markdownlint '**/*.md' '.**/**/*.md'",
     "lint-package-json": "npmPkgJsonLint -c ./.npmpackagejsonlintrc.json .",
     "lint-watch": "onchange 'src/**/*' --initial --kill --delay 1000 -- npm run lint",
     "test": "run-p --aggregate-output --print-label --silent lint typecheck jest",
@@ -86,7 +86,7 @@
     "jest-mock-extended": "1.0.18",
     "jest-raw-loader": "1.0.1",
     "lint-staged": "11.0.0",
-    "markdownlint-cli": "0.27.1",
+    "markdownlint-cli": "0.32.1",
     "npm-package-json-lint": "5.4.2",
     "npm-run-all": "4.1.5",
     "onchange": "7.1.0",
