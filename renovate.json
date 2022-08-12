@@ -1,7 +1,8 @@
 {
+  "prConcurrentLimit": 3,
   "extends": ["config:base", ":rebaseStalePrs"],
   "semanticCommits": true,
   "stabilityDays": 3,
   "prCreation": "not-pending",
-  "labels": ["type: dependencies"]
+  "labels": ["type: dependencies", "updatebot"]
 }
